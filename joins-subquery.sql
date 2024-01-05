@@ -44,7 +44,7 @@ SELECT CONCAT_WS(' ', e.firstname, e.lastname) as employee,
     m.`Salary` as manager_salary,
     concat(round(((e.`Salary` - m.`Salary`)/e.`Salary`) * 100, 1), '%') as percent_diff
 FROM employees e 
-left JOIN employees m on m.`EmployeeID` = e.`ReportsTo`
+JOIN employees m on m.`EmployeeID` = e.`ReportsTo`
 WHERE e.`Salary` > m.`Salary`
 ORDER BY percent_diff desc;
 
