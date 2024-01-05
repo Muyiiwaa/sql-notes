@@ -21,14 +21,41 @@ FROM `order details` od
 join orders o on o.`OrderID` = od.`OrderID`
 join employees e on e.`EmployeeID` = o.`EmployeeID`
 GROUP BY full_name
-ORDER BY total_revenue desc;
-
-
+ORDER BY total_revenue desc
+LIMIT 5;
 
 -- Create a report that shows the EmployeeID, 
 -- the LastName and FirstName as employee, and the LastName and FirstName of
 -- who they report to as manager from the employees table 
--- sorted by Employee
+-- sorted by Employeeid.
+
+SELECT e.employeeid, CONCAT_WS(' ', e.firstname, e.lastname) as employee,
+    CONCAT_WS(' ', m.firstname, m.lastname) as manager
+FROM employees e 
+left JOIN employees m on m.`EmployeeID` = e.`ReportsTo`;
+
+-- write a query that returns the details of employees
+-- that are earning more than their manager and the percentage 
+-- difference
+
+SELECT CONCAT_WS(' ', e.firstname, e.lastname) as employee,
+    e.`Salary` as employee_salary,
+    CONCAT_WS(' ', m.firstname, m.lastname) as manager,
+    m.`Salary` as manager_salary,
+    concat(round(((e.`Salary` - m.`Salary`)/e.`Salary`) * 100, 1), '%') as percent_diff
+FROM employees e 
+left JOIN employees m on m.`EmployeeID` = e.`ReportsTo`
+WHERE e.`Salary` > m.`Salary`
+ORDER BY percent_diff desc;
+
+
+
+
+
+
+
+
+
 
 
 
