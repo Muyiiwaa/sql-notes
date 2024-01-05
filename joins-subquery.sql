@@ -49,6 +49,14 @@ WHERE e.`Salary` > m.`Salary`
 ORDER BY percent_diff desc;
 
 
+-- Exercises 
+-- write a query that returns the number of orders that has gone to each city
+-- in the USA
+
+-- write a query that returns the names, hireddate and year of service
+-- of employees that have been around longer than their managers
+
+
 
 
 
