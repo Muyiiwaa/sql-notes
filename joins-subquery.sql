@@ -56,7 +56,7 @@ ORDER BY percent_diff desc;
 -- write a query that returns the names, hireddate and year of service
 -- of employees that have been around longer than their managers
 
-
+-- write a QUERY that returns the number of late orders sent by each employee
 
 
 
