@@ -58,6 +58,31 @@ ORDER BY percent_diff desc;
 
 -- write a QUERY that returns the number of late orders sent by each employee
 
+    -- SUBQUERIES --
+
+-- return the names of employees that earns above the average salary
+
+SELECT firstname, lastname, salary,
+FROM employees
+WHERE salary > (
+    SELECT avg(salary)
+    from employees
+    );
+
+
+
+-- returns the total orders sold by employees that earn more than their manager
+
+select COUNT(orderid) as `Total orders`
+from orders
+where employeeid in (
+    SELECT e.employeeid
+    FROM employees e
+    JOIN employees m ON m.employeeid = e.reportsto
+    WHERE e.salary > m.salary
+);
+
+
 
 
 
