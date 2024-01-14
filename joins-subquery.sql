@@ -122,13 +122,14 @@ JOIN employees e on e.employeeid = o.employeeid
 GROUP BY e.country
 ORDER BY revenue;
 
--- returns the number of units of discontinued product that was sold.
--- return the list of orders sold in 1997 with products from beverage category.
+-- 1. returns the number of units of discontinued product that was sold.
+-- 2. return the list of orders sold in 1997 with products from beverage category.
 
 
+-- github.com/Muyiiwaa/sql-notes/blob/master/joins-subquery.sql
 
-
-
+select distinct country
+from customers;
 
 
 
