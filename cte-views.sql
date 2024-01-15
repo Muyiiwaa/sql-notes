@@ -52,10 +52,48 @@ WHERE fullname in (
 GROUP BY fullname
 ORDER BY no_of_times DESC;
 
+-- how many times an employee is responsible for late delivery of priority orders
 
---- 
+WITH cte_1 as (
+    SELECT od.orderid, CONCAT_WS(' ',e.firstname, e.lastname) as fullname,
+        DATEDIFF(o.requireddate, o.shippeddate) as days,
+        od.unitprice * od.quantity as order_value
+    FROM orders o
+    JOIN `order details` od on od.orderid = o.orderid
+    JOIN employees e on e.employeeid = o.employeeid
+    WHERE o.shippeddate > o.requireddate and 
+        od.unitprice * od.quantity > (
+            select avg(unitprice * quantity)
+            from `order details`)
+            )
+select fullname, count(distinct orderid) as no_of_times
+from cte_1
+GROUP BY fullname
+ORDER BY no_of_times;
 
 
+-- hackerrank challenge solution
+with cte_1 as(
+    select h.hacker_id, h.name, count(c.challenge_id) as no_chall
+    from challenges c
+    join hackers h on h.hacker_id = c.hacker_id
+    group by h.hacker_id, h.name
+    order by 3 desc
+),
+cte_2 as (
+    select no_chall, count(no_chall) as frequency
+    from cte_1
+    group by no_chall
+)
+select a.hacker_id, a.name, a.no_chall
+from cte_1 a
+join cte_2 b on b.no_chall = a.no_chall
+where a.no_chall =(
+    select max(no_chall)
+    from cte_1
+)
+    or b.frequency = 1
+order by a.no_chall desc, a.hacker_id;
 
 
 
