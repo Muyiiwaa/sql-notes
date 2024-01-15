@@ -95,6 +95,12 @@ where a.no_chall =(
     or b.frequency = 1
 order by a.no_chall desc, a.hacker_id;
 
+-- 74.	What is the total quantity of each product that has been ordered 
+-- by customers in the year 1998 and has not been discontinued?
+
+
+-- 72.	What is the total revenue earned by 
+-- each category of products in the year 1998?
 
 
 

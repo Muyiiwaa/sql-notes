@@ -126,10 +126,7 @@ ORDER BY revenue;
 -- 2. return the list of orders sold in 1997 with products from beverage category.
 
 
--- github.com/Muyiiwaa/sql-notes/blob/master/joins-subquery.sql
 
-select distinct country
-from customers;
 
 
 
