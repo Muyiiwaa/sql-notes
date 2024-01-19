@@ -102,6 +102,43 @@ order by a.no_chall desc, a.hacker_id;
 -- 72.	What is the total revenue earned by 
 -- each category of products in the year 1998?
 
+select c.categoryname, sum(od.unitprice * od.quantity) as revenue
+from `order details` as od
+join products p on p.productid = od.productid
+join categories c on c.categoryid = p.categoryid
+join orders o on o.orderid = od.orderid
+where year(orderdate) = 1998
+GROUP BY c.categoryname
+ORDER BY revenue desc;
+
+-- write a query that returns the names of employees, the number of orders
+-- sold  and the revenue they've generated
+
+with cte_1 as (
+    SELECT concat_ws(' ', e.firstname, e.lastname) as employee,
+        count(distinct o.orderid) as no_of_orders,
+        sum(od.unitprice * od.quantity) as revenue,
+        round(sum(od.unitprice * od.quantity)/(
+                select sum(unitprice * quantity)
+                from `order details`) * 100, 2)as percentage_revenue,
+        round(count(distinct o.orderid)/(
+                select count(orderid) from orders) * 100, 2)as percentage_order
+    FROM `order details` od
+    JOIN orders o  on o.orderid = od.orderid
+    JOIN employees e on e.employeeid = o.employeeid
+    GROUP BY employee
+)
+select employee, revenue, concat(percentage_revenue, '%') as percentage_revenue,
+    concat(percentage_order, '%')as percentage_order,
+    case
+        when percentage_order >= 10 and percentage_revenue >= 10 then 'Give Bonus'
+        else 'No Bonus'
+    end as Remark
+from cte_1;
+--
+
+-- 
+
 
 
 
