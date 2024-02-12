@@ -1,66 +1,38 @@
--- GROUP BY --
--- write a query that returns the total number of orders sent to each city in the US.
+-- return the names of customers that has never bought anything from us
 
-SELECT shipcity, count(orderid) as `total US orders`
-from orders
-where ShipCountry = 'USA'
-GROUP BY ShipCity
-ORDER BY count(orderid) DESC;
+-- right join solution
+select c.customerid, c.companyname
+from orders as o
+right join customers as c on o.customerid = c.customerid
+where o.orderid IS NULL
+ORDER BY o.freight;
 
--- return the top 7 most expensive cities to ship to on average and the number of orders
--- we've sent there
-
-SELECT shipcity, AVG(freight) as `average freight`, count(orderid) as `No of orders`
-FROM orders
-GROUP BY ShipCity
-ORDER BY `average freight` DESC
-LIMIT 7;
+-- left join solution
+select c.customerid, c.companyname
+from customers c
+left join orders o on o.customerid = c.customerid
+where o.orderid IS NULL
+ORDER BY o.freight;
 
 
--- returns the top 4 best performing countries in terms of number of orders.
+-- query that returns the name of employees and the name of their managers
 
+-- self join
 
-SELECT ShipCountry, count(orderid) as no_of_orders
-FROM orders
-GROUP BY 1
-ORDER BY 2 DESC
-LIMIT 4;
+select s.firstname as staff,  m.firstname as manager
+from employees s 
+left join employees m on m.EmployeeID = s.reportsTo;
 
---  JOINS --
+-- query that returns the name, salary of staff and managers. Only for staff that
+-- collect more salary than their managers. Also return the percentage difference
+-- in salary.
 
-/*
-
-1. Inner Join (Join)
-2. Left Join
-3. Right Join
-4. Self Join
-
-*/
-
--- returns the top 5 most expensive freight cost ever paid, the country the order
--- went to and the employee responsible for the transaction.
-
-SELECT firstname, lastname, freight, ShipCountry
-FROM orders
-JOIN employees on employees.employeeid = orders.employeeid
-ORDER BY Freight DESC
-LIMIT 5;
-
--- write a query that returns the names of the top 5 best performing employees
--- in terms of revenue generated
-
-SELECT firstname, lastname, sum(unitprice * quantity) as revenue
-FROM `order details`
-JOIN orders on orders.OrderID = `order details`.OrderID
-JOIN employees on employees.EmployeeID = orders.EmployeeID
-GROUP BY firstname, lastname
-ORDER BY revenue DESC
-LIMIT 5;
-
--- query that returns the top 5 best performing cities in terms of revenue generated
--- in the last quarter of 1997
-
-
+select concat_ws(' ', s.firstname, s.lastname) as staff, s.salary,
+    concat_ws(' ', m.firstname, m.lastname) as managers, m.salary,
+    round(((s.Salary - m.Salary)/m.Salary) * 100, 2) as percentage_difference
+from employees s 
+join employees m on m.EmployeeID = s.reportsTo
+WHERE s.Salary > m.Salary;
 
 
 
