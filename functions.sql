@@ -130,6 +130,43 @@ SELECT CONCAT_WS(' ', firstName, lastname) as fullname,
 FROM employees;
 
 
+-- FUNCTIONS AND SUBQUERIES -- 3/2/2024
+
+-- write a query that returns the name of each employee and their salary
+-- concatenate with CONCAT and CONCAT_WS
+
+--concat
+SELECT concat(firstName,' ', lastname, ' ',' is a member of staff') as fullname, salary
+FROM employees;
+
+-- concat_ws
+SELECT concat_ws(' ', firstname, lastname, 'is a member of staff earning',salary)
+FROM employees;
+
+-- Upper and lower function
+-- write a query that returns customer name in capital and small letters
+SELECT upper(companyname) as capitals, lower(CompanyName) as lowers
+from customers;
+
+-- DATE-TIME FUNCTIONS
+-- return the number of payment recieved in june 2005 and the sum of those amount
+SELECT count(payment_id) as no_of_payments, sum(amount) as total_recieved
+from payment
+where month(payment_date) = 6 AND YEAR(payment_date) = 2005;
+
+-- return the number of payment recieved and sum of those amount on a monthly basis
+-- in 2005
+SELECT monthname(payment_date) as months, count(payment_id) as no_of_payments,
+    sum(amount) as total_recieved
+FROM payment
+WHERE YEAR(payment_date) = 2005
+GROUP BY months
+ORDER BY no_of_payments;
+
+-- DATE DIFFERENCE
+
+
+
 
 
 
