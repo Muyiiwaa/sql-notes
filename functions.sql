@@ -163,7 +163,16 @@ WHERE YEAR(payment_date) = 2005
 GROUP BY months
 ORDER BY no_of_payments;
 
+use sakila;
 -- DATE DIFFERENCE
+-- return the names and average days a customer holds on to a movie
+
+SELECT concat_ws(' ', c.first_name,c.last_name) as customer_name,
+    concat_ws(' ', round(AVG(datediff(r.return_date, r.rental_date)), 1), 'days') as average_duration
+from rental r
+JOIN customer c on c.customer_id = r.customer_id
+GROUP BY customer_name
+ORDER BY average_duration desc;
 
 
 
