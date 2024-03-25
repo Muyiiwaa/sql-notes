@@ -104,3 +104,81 @@ ORDER BY no_of_orders desc;
 -- exercise.
 -- return the no of employees that we have in each country
 -- return the top 10 cities with most customers
+
+
+
+-- JOINS  ---
+/*
+1. Inner join
+2. left join
+3. right join
+4. self join
+5. full outer join
+*/
+
+-- return the names of the top 10 most active customers in terms of number of orders
+
+select companyname, count(orderid) as no_of_orders
+from salesorder
+JOIN customer on customer.custId = salesorder.custId
+GROUP BY companyname
+ORDER by no_of_orders DESC
+LIMIT 10;
+
+-- the names of the top 5 best performing cities in terms of revenue generated
+-- in the last quarter of 2006
+
+select shipCity, sum(unitprice * quantity) as total_Q4_revenue
+from orderdetail
+JOIN salesorder on salesorder.orderId = orderdetail.orderId
+WHERE orderDate BETWEEN '2006-10-01' and '2006-12-31'
+GROUP BY shipCity
+ORDER BY total_Q4_revenue DESC
+limit 5;
+
+-- return the top 7 most expensive orders ever sold and the details of the employee
+-- responsible for selling them.
+
+select firstname, lastname, (unitprice * quantity) as total_cost
+FROM orderdetail
+JOIN salesorder on salesorder.orderId = orderdetail.orderId
+JOIN employee on employee.employeeId = salesorder.employeeId
+ORDER BY total_cost DESC
+LIMIT 7;
+
+-- return the details of customers that has never patronized the company
+SELECT companyname, shipCity, freight
+from customer
+LEFT JOIN salesorder on salesorder.custId = customer.custId
+WHERE freight is NULL;
+
+-- solve with right join
+select companyname, shipcity, freight
+from salesorder
+RIGHT JOIN customer on customer.custId = salesorder.custId
+WHERE freight is NULL;
+
+-- self join
+
+-- return the name of every employee and who they report to.
+
+select employee.firstname, manager.firstname as manager_name
+from employee
+left JOIN employee as manager on manager.employeeId = employee.mgrid;
+
+-- return the names of managers and the number of people answering to them
+
+
+SELECT manager.firstname, manager.lastname,
+    count(employee.firstname) as no_of_employees
+FROM employee
+LEFT JOIN employee as manager on manager.employeeId = employee.mgrId
+GROUP BY manager.firstname, manager.lastname;
+
+
+-- Exercise
+-- return the names of employees and the number of orders they have sent to US.
+
+
+
+
