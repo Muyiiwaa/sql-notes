@@ -154,85 +154,135 @@ SELECT country, count(employeeid) as no_of_employees
 FROM employees
 GROUP BY country;
 
--- JOINS (INNER, LEFT, RIGHT, SELF)
 
 -- return the names of the top 5 best performing employees in terms of revenue
-
-SELECT firstname, lastname, sum(unitprice * quantity) as revenue
-FROM `order details` as od
-JOIN orders as o on o.orderid = od.OrderID
-JOIN employees as e on e.EmployeeID = o.EmployeeID
-GROUP BY firstName, lastName
+SELECT firstname, lastname, sum(unitprice*quantity) as revenue
+FROM orders
+JOIN `order details` ON `order details`.OrderID = orders.OrderID
+JOIN employees on employees.EmployeeID = orders.EmployeeID
+GROUP BY firstName, LastName
 ORDER BY revenue DESC
 LIMIT 5;
+
 
 -- return the names of the top 3 best selling products
 -- in terms of number of orders and quantity sold
 
-select productname, count(orderid) as no_orders, sum(quantity) as total_quantity
-FROM `order details` as od
-JOIN products as p on p.productid = od.ProductID
-GROUP BY ProductName
-ORDER BY no_orders DESC, total_quantity DESC
-LIMIT 5;
+SELECT productname, count(products.ProductID) as no_of_times, sum(Quantity) as total_quantity
+FROM `order details`
+JOIN products ON products.ProductID = `order details`.ProductID
+GROUP BY productName
+ORDER BY no_of_times DESC, total_quantity desc
+LIMIT 3;
+
+-- return the list of the orders sent to canada in 1997 and the names of
+-- the employees responsible for the order
+
+select firstname, lastname, orderid, orderdate, shipCountry
+from orders
+JOIN employees ON employees.EmployeeID = orders.EmployeeID
+WHERE year(orderdate) = 1997 AND ShipCountry = 'Canada';
+
 
 -- return the top 10 customers with the highest purchase and the total
 -- amount they paid in freight.
-
-select companyname, count(orderid) as no_orders,
+select contactname, sum(unitprice * quantity) as max_spent, 
     sum(freight) as total_freight
-FROM orders as o
-JOIN customers as c on c.CustomerID = o.CustomerID
-GROUP BY CompanyName
-ORDER BY no_orders DESC
-LIMIT 10;
+from `order details`
+JOIN orders on orders.orderid = `order details`.OrderID
+JOIN customers on customers.CustomerID = orders.CustomerID
+GROUP BY ContactName
+ORDER BY max_spent desc
+limit 10;
+
+-- soluions to the assignment
+
+-- Create a report that shows the SupplierID, CompanyName, CategoryName, 
+-- ProductName and UnitPrice from the products,suppliers and categories table
+
+SELECT products.SupplierID, companyname, CategoryName, productName, unitprice
+FROM products
+JOIN suppliers on suppliers.SupplierID = products.SupplierID
+JOIN categories on categories.categoryID = products.categoryID;
+
+--Create a report that shows the OrderID ContactName,
+-- UnitPrice, Quantity, Discount from the order details, orders and
+-- customers table with discount given on every purchase.
+
+select orders.OrderID ContactName,unitprice, quantity, discount
+FROM `order details`
+JOIN orders on orders.orderid = `order details`.OrderID
+join customers on customers.customerid = orders.CustomerID;
 
 
 -- LEFT AND RIGHT JOIN
-
 -- return the names of customers and the number of orders they have
 -- bought from us
 
-SELECT companyname, count(orderid) as no_orders
-FROM orders as o
-JOIN customers as c on c.CustomerID = o.CustomerID
-GROUP BY CompanyName
-ORDER BY no_orders;
+SELECT companyname, contactname, count(orderid) as no_of_orders
+FROM customers
+LEFT JOIN orders ON orders.CustomerID = customers.CustomerID
+GROUP BY CompanyName, contactname
+ORDER BY no_of_orders;
+
+
 
 -- return the names of customers that has never bought anything from us
 -- left join solution
-SELECT companyname, count(orderid) as no_orders
-FROM customers as c
-LEFT JOIN orders as o on o.CustomerID = c.CustomerID
-GROUP BY CompanyName
-HAVING no_orders = 0
-ORDER BY no_orders;
 
--- right join solution
-SELECT companyname, count(orderid) as no_orders
-FROM orders as o
-RIGHT JOIN customers as c on c.CustomerID = o.CustomerID
-GROUP BY CompanyName
-HAVING no_orders = 0
-ORDER BY no_orders;
+SELECT companyname, contactname, count(orderid) as no_of_orders
+FROM customers 
+LEFT JOIN orders ON orders.CustomerID = customers.CustomerID
+WHERE OrderID is NULL
+GROUP BY CompanyName, contactname
+ORDER BY no_of_orders
+;
+
+-- right join
+SELECT companyname, contactname, count(orderid) as no_of_orders
+FROM orders 
+RIGHT JOIN customers ON customers.CustomerID = orders.CustomerID
+WHERE OrderID is NULL
+GROUP BY CompanyName, contactname
+ORDER BY no_of_orders
+;
+
+
+-- assignment
+--  ProductDetails that shows the ProductID, CompanyName, ProductName, 
+-- CategoryName, Description,QuantityPerUnit, UnitPrice,
+-- UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued from the supplier, 
+-- products and categories tables.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 -- SELF JOIN
 
 -- return the name of employees and the name of their manager 
-select staff.firstname as staff_name, manager.firstname as manager_name
-from employees as staff
-left join employees as manager on manager.employeeId = staff.ReportsTo;
+
 
 
 -- ASSIGNMENT 
 -- solution
 -- return the names of employees that were hired ealier than their manager
-select staff.firstname as staff_name, staff.hiredate as employees_hiredate,
-     manager.firstname as manager_name, manager.hiredate as manager_hiredate
-from employees as staff
-left join employees as manager on manager.employeeId = staff.ReportsTo
-WHERE staff.hiredate < manager.hiredate;
+
 
 
 
@@ -241,85 +291,32 @@ WHERE staff.hiredate < manager.hiredate;
 -- FUNCTIONS
 
 -- return the full names of employees that were hired ealier than their manager
-select concat(e.firstname, ' ', e.lastname) as fullname, 
-    e.hiredate as employees_hiredate,
-    concat(m.firstname, ' ', m.lastname) as manager,
-    m.hiredate as m_hiredate
-from employees as e
-left join employees as m on m.employeeId = e.ReportsTo
-WHERE e.hiredate < m.hiredate;
+
 
 -- return the total number orders and revenue generated by each employee in
 -- the second quarter of 1997
 
-SELECT concat(e.firstname,' ', e.lastname) as employee,
-    count(o.orderid) as no_orders, sum(unitprice * quantity) as revenue
-FROM `order details` as od
-JOIN orders as o on o.orderid = od.OrderID
-JOIN employees as e on e.EmployeeID = o.EmployeeID
-WHERE YEAR(orderdate) = 1997 and 
-    (MONTH(orderDate) >= 4  and MONTH(orderDate) <= 6)
-GROUP BY employee
-ORDER BY no_orders DESC, revenue DESC;
 
 
 -- SUBQUERIES 
 
 -- return the names of customers that has never bought anything from us
 
-SELECT distinct companyname
-FROM customers 
-WHERE NOT CustomerID IN (
-    SELECT DISTINCT CustomerID
-    FROM orders
-);
+
 
 -- return the names and salaries of employees that earns above average
 
-SELECT concat(firstname, ' ', lastname) as fullname,salary
-FROM employees
-WHERE salary > (
-    select avg(salary)
-    from employees
-);
 
 -- return the names and salaries of employees that earns above average and the
 -- percentage difference
 
-with cte_1 as (
-    SELECT concat(firstname, ' ', lastname) as fullname,salary,
-        round(((salary - (
-            select avg(salary)
-            from employees))/salary) * 100, 2) as percentage_diff
-    FROM employees
-    WHERE salary > (
-        select avg(salary)
-        from employees)
-)
-select fullname, salary, concat(percentage_diff, '%') as percent_diff
-from cte_1;
 
 -- return the names of employees and the number of lated deliveries they were
 -- responsible for
-with cte_1 as (
-select concat(e.firstname, ' ', e.lastname) as employees,
-    o.orderid, datediff(o.shippedDate, o.requireddate) as no_of_days,
-    o.shippedDate, o.requireddate 
-from orders o
-join employees e on e.employeeId = o.employeeId
-where o.shippedDate > o.requireddate
-)
-select employees, count(orderid) as no_of_times, avg(no_of_days) as avg_days
-from cte_1
-GROUP BY employees
-order BY no_of_times desc, avg_days desc;
 
 -- EXECRCISE 
 -- extend the last solution to generate the percentage of late deliveries by each
 -- employee
-
-
-
 
 
 
